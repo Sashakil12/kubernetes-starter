@@ -1,0 +1,23 @@
+sudo: required
+services:
+      -  docker
+env:
+      global:
+         - SHA= $(git rev-parse HEAD)
+         - CLOUDSDK_CORE_DISABLE_PROMPTS=1 #google cloud specific
+before_install:
+      -  <the command that travis cli returns after encrypting the google cloud service account yml$
+      -  curl https://sdk.cloud.google.com | bash > /dev/null;
+      -  soure $HOME/google-cloud-sdk/path.bash.inc
+      -  gcloud components update kubectl
+      -  gcloud auth activate-service-account --key-file < replace with your file name | service-ac$
+      -  gcloud config set project <replace with project id | skilful-berm-214822>
+      -  gcloud config set compute/zone <replace with project zone | us-central>
+      -  gcloud container clusters grt-credentials <replace with project name | multi cluster>
+      -  echo "$DOCKER_PASSWORD"| docker login -u "$DOCKER_USERNAME" --password-stdin
+      -  docker build -t sashakil/react-test -f ./client/Dockerfile.dev .
+
+script:
+      -  docker run -env CI=true sashakil/react-test npm test
+
+
